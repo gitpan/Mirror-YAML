@@ -1,0 +1,22 @@
+abstract: Mirror Configuration and Auto-Discovery
+author: Adam Kennedy <adamk@cpan.org>
+build_requires: 
+  LWP::Online: 0.02
+  Test::More: 0.42
+distribution_type: module
+generated_by: Module::Install version 0.64
+license: perl
+name: Mirror-YAML
+no_index: 
+  directory: 
+    - inc
+    - t
+requires: 
+  LWP::Simple: 0
+  Params::Util: 0.10
+  Time::HiRes: 0
+  Time::Local: 1.13
+  URI: 1.28
+  YAML::Tiny: 1.03
+  perl: 5.005
+version: 0.02
