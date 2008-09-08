@@ -8,35 +8,25 @@ BEGIN {
 	$^W = 1;
 }
 
-use Test::More tests => 9;
+use Test::More tests => 10;
 use File::Spec::Functions ':ALL';
 use Mirror::YAML;
-use LWP::Online 'online';
 
-# Basic construction
-my $simple_file = catfile('t', 'data', 'simple.yaml');
-ok( -f $simple_file, "Found test file" );
-my $simple_conf = Mirror::YAML->read($simple_file);
+my $simple_dir  = catdir('t', 'data', 'simple');
+my $simple_file = catfile($simple_dir, 'mirror.yml');
+ok( -d $simple_dir,  'Found test directory' );
+ok( -f $simple_file, 'Found test file'      );
+
+# Load the mirror
+my $simple_conf = Mirror::YAML->read($simple_dir);
 isa_ok( $simple_conf, 'Mirror::YAML' );
 is( $simple_conf->name, 'JavaScript Archive Network', '->name ok' );
-isa_ok( $simple_conf->uri, 'URI' );
+isa_ok( $simple_conf->master, 'URI::http' );
+is( scalar($simple_conf->mirrors), 14, 'Got 14 mirrors' );
+
+# Check the timing numbers
+my $number = qr/^\d+\.\d*$/;
 is( $simple_conf->timestamp, 1168895872, '->timestamp ok' );
-ok( $simple_conf->age, '->age ok' );
-
-
-
-
-
-# Fetch URIs
-SKIP: {
-	skip("Not online", 1) unless online;
-	my $rv = $simple_conf->check_mirrors;
-	ok( $rv, '->get_all ok' );
-
-	# Get some mirrors
-	my @m = $simple_conf->select_mirrors;
-	ok( scalar(@m), 'Got at least 1 mirror' );
-	isa_ok( $m[0], 'URI', 'Got at least 1 URI object' );
-}
-
-exit(0);
+like( $simple_conf->lastget, $number,    '->lastget ok'   );
+like( $simple_conf->lag,     $number,    '->lag ok'       );
+like( $simple_conf->age,     $number,    '->age ok'       );
